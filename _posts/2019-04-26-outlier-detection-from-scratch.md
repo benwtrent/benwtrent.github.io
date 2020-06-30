@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Outlier detection from scratch in python 
+title: Outlier detection from scratch (sort of) in python 
 published: true
 ---
 
@@ -55,40 +55,18 @@ Four separate algorithms are shown below:
 This is a very intuitive measure. How far away are you from your K<sup>th</sup> neighbor? The farther away, the more likely you are to be an outlier from the set.
 
 ```python
-from matplotlib.colors import Normalize
+from sklearn.neighbors import NearestNeighbors
 
 k = 10
 
-def k_nearest_neighbors(pt, pts):
-    # Computes the Euclidean distance from pt to every point in pts
-    distance_to_every_point = np.linalg.norm(pt - pts, axis=1)
-    
-    # Gets the sorted indices given the distances that we just found
-    sorted_indices = np.argsort(distance_to_every_point)
+knn = NearestNeighbors(n_neighbors=k)
 
-    # Get the sorted points
-    sorted_pts = pts[sorted_indices]
-    
-    # remove the first one as it is the same point as pt (because the distance is 0)
-    sorted_pts = sorted_pts[1:]
-    
-    # Get me the first K of the sorted pts array
-    return sorted_pts[:k] 
-
-KNN_table = []
-
-# Gather the KNN for every point and store them in order in a list
-# A kd-tree would be preferred here, simply brute-forcing for simplicity
-# Storing this information in a table as we will need it for the other algorithms
-for i in range(X.shape[0]):
-    KNN_table.append(k_nearest_neighbors(X[i], X))
-
-
+knn.fit(X)
 # Gather the kth nearest neighbor distance
-knn_distance = []
-for i in range(X.shape[0]):
-    knn_distance.append(np.linalg.norm(X[i] - KNN_table[i][k-1]))
-
+neighbors_and_distances = knn.kneighbors(X)
+knn_distances = neighbors_and_distances[0]
+neighbors = neighbors_and_distances[1]
+kth_distance = [x[-1] for x in sk_knn_distances]
 ```
 
 
@@ -100,12 +78,8 @@ for i in range(X.shape[0]):
 Very similar to K<sup>th</sup>NN, but we average out all the distances to the K nearest neighbors. Since K<sup>th</sup>NN only takes a single neighbor into consideration, it may miss certain outliers that TNN finds. 
 
 ```python
-# Gather the kth nearest neighbor distance
-tnn_distance = []
-for i in range(X.shape[0]):
-    k_distances = np.linalg.norm(X[i] - np.array(KNN_table[i]), axis=1)
-    tnn_distance.append(np.mean(k_distances))
-
+# Gather the average distance to each points nearest neighbor 
+tnn_distance = np.mean(knn_distances, axis=1)
 ```
 Notice the point in the upper-right corner, TNN determines that it is more likely an outlier due to how far it is from all its neighbors.
 
@@ -129,22 +103,18 @@ So, the `Ldof(x) = TNN(x)/KNN_Inner_distance(KNN(x))`
 This combination makes this method a density and a distance measurement. The idea is that a point with a LDoF score >> 1.0 is well outside the cloud of K nearest neighbors. Any point with an LDoF score less than or "near" 1.0 could be considered "surrounded" via the cloud of neighbors.  
 
 ```python
-
 # Gather the inner distance for pts
 def knn_inner_distance(pts):
     summation = 0
     for i in range(len(pts)):
         pt = pts[i]
-        for j in range(len(pts)):
-            summation = summation + np.linalg.norm(pt - pts[j])
+        for other_pt in pts[i:]:
+            summation = summation + np.linalg.norm(pt - other_pt)
     return summation / (k * (k - 1))
 
-ldofs = []
+inner_distances = [knn_inner_distance(X[ns]) for ns in neighbors]
 
-for i in range(X.shape[0]):
-    knn_i_d = knn_inner_distance(KNN_table[i])
-    ldofs.append(tnn_distance[i]/knn_i_d)
-
+ldofs = [x/y for x,y in zip(tnn_distance, inner_distances)]
 ```
 You can notice the effect of the "cloud" idea. All the points between the clusters are marked with a much lower probability of being an outlier, while those outside the cloud have a much higher likelihood.
 
@@ -167,39 +137,28 @@ The [wikipedia article on lof](https://en.wikipedia.org/wiki/Local_outlier_facto
 
 
 ```python
-
-knn_lookup_table = {}
-for i in range(X.shape[0]):
-    knn_lookup_table[tuple(X[i])] = KNN_table[i]
-
-
-def reachability_distance(pt1, pt2):
-    true_distance = np.linalg.norm(pt1 - pt2) 
-    other_knn_distance = np.linalg.norm(pt2 - knn_lookup_table[tuple(pt2)][-1])
-    return max([true_distance, other_knn_distance])
-
-local_reach_density_lookup_table = {}
-# Calculate each points local reach density and store it in the table
+local_reach_density = []
 for i in range(X.shape[0]):
     pt = X[i]
-    knns = KNN_table[i]
     sum_reachability = 0
-    for j in range(len(knns)):
-        sum_reachability = sum_reachability + reachability_distance(pt, knns[j])
+    neighbor_distances = knn_distances[i]
+    pt_neighbors = neighbors[i]
+    for neighbor_distance, neighbor_index in zip(neighbor_distances, pt_neighbors):
+        neighbors_kth_distance = kth_distance[neighbor_index]
+        sum_reachability = sum_reachability + max([neighbor_distance, neighbors_kth_distance])
+        
     avg_reachability = sum_reachability / k
-    local_reach_density_lookup_table[tuple(pt)] = (1/avg_reachability)
+    local_reach_density.append(1/avg_reachability)
 
+local_reach_density = np.array(local_reach_density)
 lofs = []
-# Calculate the LoF for each point
 for i in range(X.shape[0]):
     pt = X[i]
-    knns = KNN_table[i]
-    lrd_knns = 0
-    for j in range(len(knns)):
-        lrd_knns = lrd_knns + local_reach_density_lookup_table[tuple(knns[j])]
-    avg_lrd = lrd_knns / k
-    lofs.append(avg_lrd/local_reach_density_lookup_table[tuple(pt)])
+    avg_lrd = np.mean(local_reach_density[neighbors[i]])
+    lofs.append(avg_lrd/local_reach_density[i])
 
+# Or just use
+# from sklearn.neighbors import LocalOutlierFactor
 ```
 
 
