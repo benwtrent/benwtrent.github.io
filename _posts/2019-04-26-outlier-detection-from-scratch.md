@@ -39,7 +39,7 @@ pyplot.show()
 ```
 
 
-![png](/assets/output_1_0.png)
+![png](/assets/outlier-detection-from-scratch/output_1_0.png)
 
 
 ## The Algorithms
@@ -70,7 +70,7 @@ kth_distance = [x[-1] for x in sk_knn_distances]
 ```
 
 
-![png](/assets/output_4_0.png)
+![png](/assets/outlier-detection-from-scratch/output_4_0.png)
 
 
 # Average distance to K Nearest Neighbors (TNN)
@@ -83,7 +83,7 @@ tnn_distance = np.mean(knn_distances, axis=1)
 ```
 Notice the point in the upper-right corner, TNN determines that it is more likely an outlier due to how far it is from all its neighbors.
 
-![png](/assets/output_6_0.png)
+![png](/assets/outlier-detection-from-scratch/output_6_0.png)
 
 
 # Local Distance-based Outlier Factor (LDoF)
@@ -118,7 +118,7 @@ ldofs = [x/y for x,y in zip(tnn_distance, inner_distances)]
 ```
 You can notice the effect of the "cloud" idea. All the points between the clusters are marked with a much lower probability of being an outlier, while those outside the cloud have a much higher likelihood.
 
-![png](/assets/output_8_0.png)
+![png](/assets/outlier-detection-from-scratch/output_8_0.png)
 
 
 # Local Outlier Factor (LoF)
@@ -162,5 +162,5 @@ for i in range(X.shape[0]):
 ```
 
 
-![png](/assets/output_10_0.png)
+![png](/assets/outlier-detection-from-scratch/output_10_0.png)
 

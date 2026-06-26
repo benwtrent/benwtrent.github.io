@@ -1,48 +1,40 @@
-{% if site.layout == 'stacked' %}
-  {% assign metadata_styles = 'd-md-inline-block mx-3 mb-1 mb-md-0' %}
-{% else %}
-  {% assign metadata_styles = 'd-flex flex-items-center mb-1' %}
-{% endif %}
+{% assign user = site.github.owner %}
 
-<img src="{{ user.avatar_url }}" class="circle mb-1" style="max-width: 100px;">
-<h1 class="{% if site.style == 'dark' %}text-white{% endif %} mb-2 lh-condensed">{% if user.name %}{{ user.name }}{% else %}{{ user.login }}{% endif %}</h1>
-<p class="mb-3 f4 {% if site.style == 'dark' %}text-white{% else %}text-gray{% endif %}">
-  {{ user.bio }}
-</p>
+<div class="profile">
+  <img src="{{ user.avatar_url }}" class="profile-avatar" alt="{{ user.name }}">
+  <h2 class="profile-name">{% if user.name %}{{ user.name }}{% else %}{{ user.login }}{% endif %}</h2>
+  {% if user.bio %}
+  <p class="profile-bio">{{ user.bio }}</p>
+  {% endif %}
 
-{% if include.metadata %}
-  <div class="f4 mb-3">
-    {% if user.name %}
-      <div class="{{ metadata_styles }}">
-        {% octicon mark-github height:20 class:"mr-2 v-align-middle" fill:{{ icon_color }} aria-label:GitHub %}
-        <a href="https://github.com/{{ user.login }}" {% if site.style == 'dark' %}class="text-white"{% endif %}>
-          @{{ user.login }}
-        </a>
-      </div>
+  {% if include.metadata %}
+  <div class="profile-meta">
+    {% if user.login %}
+    <div class="profile-meta-item">
+      {% octicon mark-github height:16 fill:{{ icon_color }} aria-label:GitHub %}
+      <a href="https://github.com/{{ user.login }}">@{{ user.login }}</a>
+    </div>
     {% endif %}
     {% if user.email %}
-      <div class="{{ metadata_styles }}">
-        {% octicon mail height:20 class:"mr-2 v-align-middle" fill:{{ icon_color }} aria-label:email %}
-        <a href="mailto:{{ user.email }}" {% if site.style == 'dark' %}class="text-white"{% endif %}>
-          {{ user.email }}
-        </a>
-      </div>
+    <div class="profile-meta-item">
+      {% octicon mail height:16 fill:{{ icon_color }} aria-label:email %}
+      <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+    </div>
     {% endif %}
     {% if site.social_media %}
-      <div class="d-flex flex-wrap flex-items-start {% if site.layout == 'stacked' %}flex-justify-center mt-1 mt-md-3{% endif %}">
-        {% for account in site.social_media %}
-          <div class="{% unless forloop.last == true %}mr-3{% endunless %} mb-3">
-            {% assign service_shortname = account[0] %}
-            {% assign service = site.data.social_media[service_shortname] %}
-            <a href="{{ service.profile_url_prefix }}{{ account[1] }}" class="tooltipped tooltipped-se" aria-label="{{ service.name }}: {{ account[1] }}">
-              {{ service.icon_svg }}<span class="d-none">{{ service.name }}</span>
-            </a>
-          </div>
-        {% endfor %}
-      </div>
+    <div class="profile-social">
+      {% for account in site.social_media %}
+        {% assign service_shortname = account[0] %}
+        {% assign service = site.data.social_media[service_shortname] %}
+        <a href="{{ service.profile_url_prefix }}{{ account[1] }}" title="{{ service.name }}: {{ account[1] }}">
+          {{ service.icon_svg }}<span class="sr-only">{{ service.name }}</span>
+        </a>
+      {% endfor %}
+    </div>
     {% endif %}
     {% if user.hireable %}
-      <span title="Hire me" class="d-inline-block f5 rounded-2 text-white bg-green py-1 px-2">Available for hire</span>
+    <span class="profile-badge">Available for hire</span>
     {% endif %}
   </div>
-{% endif %}
+  {% endif %}
+</div>

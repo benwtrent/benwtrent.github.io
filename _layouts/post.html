@@ -1,70 +1,121 @@
 {% include header.html %}
 
-{% capture post_body %}
-  {% if site.social_media %}
-    {% assign shareable_social_media = '' | split: ',' %}
-
-    {% for account in site.social_media %}
-      {% assign service_shortname = account[0] %}
-      {% assign service = site.data.social_media[service_shortname] %}
-
-      {% if service.share_url_prefix %}
-        {% assign shareable_social_media = shareable_social_media | push: service %}
-      {% endif %}
-    {% endfor %}
-
-    {% assign total_shareable_services = shareable_social_media | size %}
-
-    {% if total_shareable_services > 0 %}
-      <div class="col-sm-4 col-lg-3 d-flex flex-wrap flex-items-center d-sm-block float-sm-right border rounded-2 bg-white p-3 mb-5 ml-md-5">
-        <h3 class="text-gray-dark mr-3 mr-sm-0">Share</h3>
-        <ul class="d-flex d-sm-block list-style-none">
-          {% for service in shareable_social_media %}
-            <li class="mt-sm-3">
-              <a href="{{ service.share_url_prefix }}{{ page.url | prepend: site.url | prepend: site.baseurl | url_encode }}" title="Share on {{ service.name }}" class="d-flex flex-items-center">
-                <div style="width:32px">{{ service.icon_svg }}</div><span class="d-none d-sm-inline-block text-gray-light">{{ service.name }}</span>
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
+<div class="site-header-bar">
+  <a href="{{ site.url }}{{ site.baseurl | append:'/' }}">&#8592; Home</a>
+  <div class="header-social">
+    {% assign user = site.github.owner %}
+    {% if user.login %}
+    <a href="https://github.com/{{ user.login }}" title="GitHub" class="header-social-link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+    </a>
     {% endif %}
-  {% endif %}
-  <div class="article">
-    {{ content }}
+    {% if site.social_media.x %}
+      {% assign x_service = site.data.social_media.x %}
+      <a href="{{ x_service.profile_url_prefix }}{{ site.social_media.x }}" title="X" class="header-social-link">
+        {{ x_service.icon_svg }}
+      </a>
+    {% endif %}
+    {% if site.social_media.linkedin %}
+      {% assign li_service = site.data.social_media.linkedin %}
+      <a href="{{ li_service.profile_url_prefix }}{{ site.social_media.linkedin }}" title="LinkedIn" class="header-social-link">
+        {{ li_service.icon_svg }}
+      </a>
+    {% endif %}
   </div>
-{% endcapture %}
+</div>
 
-{% if site.layout == 'stacked' %}
-  <div class="container-lg py-6 p-responsive text-center">
-    {% include masthead.html metadata=false %}
-
-    <div class="container-md f4 text-left border rounded-2 bg-white p-3 p-sm-5 mt-6">
-      <p class="f5"><a href="/" class="d-flex flex-items-center">{% octicon chevron-left height:16 class:"mr-2 v-align-middle" fill:#0366d6 aria-label:Home %}Home</a></p>
-      <h1 class="f00-light lh-condensed">{{ page.title }}</h1>
-      <p class="{% if site.style == 'dark' %}text-white{% else %}text-gray{% endif %} mb-5">Published {{ page.date | date: "%b %d, %Y"}}</p>
-      {{ post_body }}
-    </div>
-  </div>
-{% else %}
-  <div class="d-md-flex min-height-full {% unless site.style == 'dark' %}border-md-bottom{% endunless %}">
-    <div class="flex-self-stretch {% if site.style == 'dark' %}bg-gray-dark{% else %}border-md-right border-gray-light bg-white{% endif %} col-md-5 col-lg-4 col-xl-3 px-4 px-md-6 px-lg-7 py-6">
-      {% include masthead.html metadata=true %}
-    </div>
-
-    <div class="col-md-7 col-lg-8 col-xl-9 px-4 py-6 px-lg-7 border-top border-md-top-0 bg-gray-light" {% if site.style == 'dark' %}style="background-color: #2f363d !important"{% endif %}>
-      <div class="mx-auto" style="max-width: 900px;">
-        <div class="f4 {% if site.style == 'dark' %}text-white{% endif %} mb-6">
-          <div class="f4 {% if site.style == 'dark' %}text-white{% endif %}">
-            <p class="f5"><a href="{{ site.url }}{{ site.baseurl | append:'/' }}" class="d-flex flex-items-center {% if site.style == 'dark' %}text-white{% endif %}">{% octicon chevron-left height:16 class:"mr-2 v-align-middle" fill:{{ icon_color }} aria-label:Home %}Home</a></p>
-            <h1 class="f00-light lh-condensed" style="font-family=Courier;">{{ page.title }}</h1>
-            <p class="{% if site.style == 'dark' %}text-white{% else %}text-gray{% endif %} mb-5">Published {{ page.date | date: "%b %d, %Y"}}</p>
-            {{ post_body }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+{% if page.header_image %}
+<div class="post-header-image">
+  <img src="{{ page.header_image }}" alt="{{ page.title }}">
+</div>
 {% endif %}
+
+<div class="site-wrapper">
+  <div class="layout-post">
+    <article class="post-main">
+      <h1 class="post-title">{{ page.title }}</h1>
+      <p class="post-date">Published {{ page.date | date: "%b %d, %Y" }}</p>
+      <div class="article">
+        {{ content }}
+      </div>
+    </article>
+
+    <aside class="post-sidebar">
+      <nav class="toc-nav" aria-label="Table of contents">
+        <p class="toc-heading">On this page</p>
+        <ul class="toc-list"></ul>
+      </nav>
+    </aside>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var article = document.querySelector('.post-main .article');
+  var tocList = document.querySelector('.toc-list');
+  var tocNav  = document.querySelector('.toc-nav');
+  if (!article || !tocList) return;
+
+  var headings = Array.from(article.querySelectorAll('h1, h2, h3'));
+  if (headings.length < 2) {
+    if (tocNav) tocNav.style.display = 'none';
+    return;
+  }
+
+  // Determine minimum heading level so hierarchy is relative (h1-led vs h2-led posts)
+  var minLevel = Math.min.apply(null, headings.map(function (h) {
+    return parseInt(h.tagName.charAt(1));
+  }));
+
+  headings.forEach(function (h) {
+    var text = h.textContent.trim();
+
+    // Assign ID if not already set by Jekyll
+    if (!h.id) {
+      h.id = text.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, '-');
+    }
+
+    // Inject anchor link into heading for direct linking from the body
+    var anchor = document.createElement('a');
+    anchor.href = '#' + h.id;
+    anchor.className = 'heading-anchor';
+    anchor.setAttribute('aria-hidden', 'true');
+    anchor.textContent = '#';
+    h.appendChild(anchor);
+
+    // Build TOC entry; indent anything deeper than the minimum level
+    var level = parseInt(h.tagName.charAt(1));
+    var li = document.createElement('li');
+    li.className = 'toc-item' + (level > minLevel ? ' toc-sub' : '');
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = text;
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+
+  // Scroll-spy: highlight the last heading above the viewport midpoint
+  function updateToc() {
+    var threshold = window.scrollY + 120;
+    var active = null;
+    for (var i = headings.length - 1; i >= 0; i--) {
+      if (headings[i].getBoundingClientRect().top + window.scrollY <= threshold) {
+        active = headings[i];
+        break;
+      }
+    }
+    tocList.querySelectorAll('.toc-item').forEach(function (el) {
+      el.classList.remove('active');
+    });
+    if (active) {
+      var link = tocList.querySelector('a[href="#' + active.id + '"]');
+      if (link) link.parentElement.classList.add('active');
+    }
+  }
+
+  window.addEventListener('scroll', updateToc, { passive: true });
+  updateToc();
+});
+</script>
 
 {% include footer.html %}

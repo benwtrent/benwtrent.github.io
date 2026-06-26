@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Via Kibana Maps 
-tags: [geo, geospatial, elasticsearch, kibana, maps, gtfs]
+tags: [geo, geospatial, elasticsearch, elastic, kibana, maps, gtfs]
 published: true
 ---
 
@@ -40,13 +40,13 @@ Once I had all the data read, it was a simple matter of utilizing [elasticsearch
 
 Kibana Maps comes built in with a default vector road map. I used this as my bottom layer. For each consecutive layer, I chose the `Documents` data source. 
 
-![alt text](/assets/via_adding_layer.gif "Adding a new layer to Maps")
+![alt text](/assets/via-kibana-maps-1/via_adding_layer.gif "Adding a new layer to Maps")
 
 With each layer you have options to add a tooltip, adjust the size and color, and even "join" in some more external data to provide more meaning. 
 
 Here is my completed map showing all of Via's routes in San Antonio, their Stops, Starts and Finishes.
 
-![alt text](/assets/via_full.jpg "Via Kibana Maps").
+![alt text](/assets/via-kibana-maps-1/via_full.jpg "Via Kibana Maps").
 
 
 ---------------------------------------------------------------------------------------------

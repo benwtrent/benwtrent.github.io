@@ -1,9 +1,6 @@
-<h1 {% if site.style == 'dark' %}class="text-white"{% endif %}>Some Thoughts</h2>
-<hr>
-<div>
+<h2 class="section-heading">Some Thoughts</h2>
+<div class="post-list">
   {% for post in site.posts %}
-    <div>
-      {% include post-card.html %}
-    </div>
+    {% include post-card.html %}
   {% endfor %}
 </div>

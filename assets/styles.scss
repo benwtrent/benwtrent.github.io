@@ -1,50 +1,423 @@
 ---
 ---
-@import url('https://fonts.googleapis.com/css?family=Fira+Sans');
-@import url('https://unpkg.com/primer/build/build.css');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600&display=swap');
 @import 'highlight-syntax';
-// If a user adds a custom font, this component will stop it from bleeding into GitHub components:
-.github-component {
-  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol !important;
+
+// --------- Variables ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$font:         'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+$font-mono:    'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+$color-text:   #24292e;
+$color-muted:  #586069;
+$color-border: #e1e4e8;
+$color-link:   #0366d6;
+$color-bg:     #ffffff;
+$color-bg-alt: #f6f8fa;
+
+// --------- Reset / base ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 
-.repo-language-color {
-    filter: brightness(125%) !important;
-    border-radius: 50%;
-    display: inline-block;
-    height: 12px;
-    position: relative;
-    top: 2px;
-    width: 12px;
+body {
+  font-family: $font;
+  color: $color-text;
+  background: $color-bg;
+  line-height: 1.65;
+  font-size: 16px;
 }
 
-.emoji {
-  width: 18px;
-  height: auto;
-  vertical-align: middle;
+a {
+  color: $color-link;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
 }
 
-.article {
-  ul {
-    list-style-position: inside;
+img { max-width: 100%; height: auto; }
+
+// --------- Site wrapper ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+.site-wrapper {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+// --------- Site header bar (post pages) ---------------------------------------------------------------------------------------------------------------------------------------
+.site-header-bar {
+  border-bottom: 1px solid $color-border;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  a {
+    color: $color-text;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    &:hover { color: $color-link; text-decoration: none; }
   }
-  h1, h2, h3, h4,
+}
+
+.header-social {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.header-social-link {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.55;
+  transition: opacity 0.12s;
+  svg { display: block; }
+  &:hover { opacity: 1; text-decoration: none; }
+}
+
+// --------- Home layout ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+.layout-home {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 4rem;
+  padding: 3rem 0;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    .home-sidebar { order: -1; }
+  }
+}
+
+.home-sidebar {
+  position: sticky;
+  top: 2rem;
+}
+
+// --------- Profile (home sidebar) ---------------------------------------------------------------------------------------------------------------------------------------------------------
+.profile {
+  .profile-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .profile-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.4rem;
+    line-height: 1.2;
+    color: $color-text;
+  }
+
+  .profile-bio {
+    font-size: 0.875rem;
+    color: $color-muted;
+    margin: 0 0 0.9rem;
+    line-height: 1.5;
+  }
+
+  .profile-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .profile-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: $color-muted;
+
+    a {
+      color: $color-muted;
+      &:hover { color: $color-link; text-decoration: none; }
+    }
+
+    svg { flex-shrink: 0; }
+  }
+
+  .profile-social {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+
+    a {
+      color: $color-muted;
+      display: inline-flex;
+      align-items: center;
+      &:hover { color: $color-text; text-decoration: none; }
+      svg { width: 20px; height: 20px; }
+    }
+  }
+
+  .profile-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    background: #28a745;
+    color: #fff;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    margin-top: 0.5rem;
+  }
+}
+
+// --------- Post header image ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+.post-header-image {
+  width: 100%;
+  max-height: 420px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+    margin: 0;
+  }
+}
+
+// --------- Post layout ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+.layout-post {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 3rem;
+  padding: 2.5rem 0;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.post-main { min-width: 0; }
+
+.post-title {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 0.4rem;
+  letter-spacing: -0.01em;
+  color: $color-text;
+}
+
+.post-date {
+  font-size: 0.875rem;
+  color: $color-muted;
+  margin: 0 0 2rem;
+}
+
+// --------- TOC sidebar ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+.post-sidebar {
+  position: sticky;
+  top: 2rem;
+
+  @media (max-width: 900px) { display: none; }
+}
+
+.toc-nav { border-left: 1px solid $color-border; padding-left: 0.75rem; }
+
+.toc-heading {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: $color-muted;
+  margin: 0 0 0.6rem;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-item {
+  a {
+    display: block;
+    padding: 0.2rem 0 0.2rem 0.65rem;
+    font-size: 0.8rem;
+    color: $color-muted;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    margin-left: -0.76rem;
+    line-height: 1.4;
+    transition: color 0.12s, border-color 0.12s;
+
+    &:hover { color: $color-text; text-decoration: none; }
+  }
+
+  &.active > a {
+    color: $color-link;
+    border-left-color: $color-link;
+    font-weight: 500;
+  }
+
+  &.toc-sub > a {
+    padding-left: 1.4rem;
+    font-size: 0.75rem;
+  }
+}
+
+// --------- Article content ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+.article {
+  h1, h2, h3, h4, h5, h6 {
+    margin: 1.75rem 0 0.6rem;
+    line-height: 1.3;
+    font-weight: 600;
+    &:first-child { margin-top: 0; }
+
+    .heading-anchor {
+      opacity: 0;
+      margin-left: 0.4rem;
+      font-weight: 400;
+      font-size: 0.8em;
+      color: $color-muted;
+      text-decoration: none;
+      transition: opacity 0.12s;
+      &:hover { color: $color-link; text-decoration: none; }
+    }
+    &:hover .heading-anchor { opacity: 1; }
+  }
+
+  h1 { font-size: 1.65rem; }
+  h2 { font-size: 1.3rem; border-bottom: 1px solid $color-border; padding-bottom: 0.3rem; }
+  h3 { font-size: 1.1rem; }
+  h4 { font-size: 1rem; }
+  h5, h6 { font-size: 0.9rem; color: $color-muted; }
+
+  p { margin: 0 0 1rem; }
+
+  ul, ol { margin: 0 0 1rem; padding-left: 1.75rem; }
+  li { margin-bottom: 0.25rem; }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    display: block;
+    margin: 1.25rem auto;
+  }
+
+  code {
+    font-family: $font-mono;
+    font-size: 0.84em;
+    background: $color-bg-alt;
+    border: 1px solid $color-border;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+
+  pre {
+    margin: 0 0 1.25rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    background: #272822; // monokai bg
+    code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.85rem;
+      color: #f8f8f2;
+    }
+  }
+
   .highlight {
-    margin-bottom: 16px;
+    margin-bottom: 1.25rem;
+    border-radius: 6px;
+    overflow: hidden;
+    pre { margin: 0; border-radius: 0; }
   }
 
   blockquote {
-    color: #6a737d;
-    border-left: 2px solid #959da5;
-    padding-left: 16px;
+    color: $color-muted;
+    border-left: 3px solid $color-border;
+    padding: 0.25rem 0 0.25rem 1rem;
+    margin: 1rem 0;
+    font-style: italic;
   }
-  color: #000;
-  background: white;
-  h6{
-    color: darkgray
-  } 
+
+  hr {
+    border: none;
+    border-top: 1px solid $color-border;
+    margin: 2rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    th, td { padding: 0.5rem 0.75rem; border: 1px solid $color-border; }
+    th { background: $color-bg-alt; font-weight: 600; }
+  }
+
+  sup a { color: $color-link; }
 }
 
-.min-height-full {
-  min-height: 100vh;
+// --------- Post card (home list) ------------------------------------------------------------------------------------------------------------------------------------------------------------
+.post-card {
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid $color-border;
+
+  &:last-child { border-bottom: none; }
+
+  .post-card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 0.2rem;
+    a {
+      color: $color-text;
+      &:hover { color: $color-link; text-decoration: none; }
+    }
+  }
+
+  .post-card-date {
+    font-size: 0.85rem;
+    color: $color-muted;
+  }
 }
+
+.section-heading {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid $color-border;
+  color: $color-text;
+}
+
+// --------- Misc ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+.repo-language-color {
+  filter: brightness(125%) !important;
+  border-radius: 50%;
+  display: inline-block;
+  height: 12px;
+  position: relative;
+  top: 2px;
+  width: 12px;
+}
+
+.emoji { width: 18px; height: auto; vertical-align: middle; }
+
+.min-height-full { min-height: 100vh; }

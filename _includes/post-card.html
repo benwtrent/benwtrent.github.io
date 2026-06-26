@@ -1,10 +1,6 @@
-<div>
-  <div>
-    <h1>
-      <a href="{{ site.baseurl }}{{ post.url }}">
-        {{ post.title }}
-      </a>
-    </h1>
-  </div>
-  <div class="text-dark-gray mb-2 ws-normal">{{ post.date | date: "%b %d, %Y"}}</div>
+<div class="post-card">
+  <h3 class="post-card-title">
+    <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+  </h3>
+  <div class="post-card-date">{{ post.date | date: "%b %d, %Y" }}</div>
 </div>
