@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Elasticsearch Vector DiskBBQ filter search is now 3–5x faster"
+title: "Narrow prefiltering for partitioned vector indices"
 published: true
 tags: [elastic, elasticsearch]
 ---
